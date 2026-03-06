@@ -53,8 +53,8 @@
     .panel.active{display:block;}
 
     /* ── CARD ── */
-    .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.5rem;}
-    .card-header{background:var(--navy);color:#fff;padding:0.75rem 1.2rem;font-weight:600;font-size:14px;}
+    .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1.5rem;}
+    .card-header{background:var(--navy);color:#fff;padding:0.75rem 1.2rem;font-weight:600;font-size:14px;border-radius:var(--radius) var(--radius) 0 0;}
     .card-body{padding:1.2rem;}
 
     /* ── FORM ── */
@@ -181,19 +181,19 @@
     .section-title{font-weight:700;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin:1.2rem 0 0.6rem;}
 
     /* date multi-select mini calendar */
-    .mini-cal{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;width:100%;}
+    .mini-cal{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;width:100%;min-width:280px;}
     .mini-cal-header{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.75rem;background:var(--bg);border-bottom:1px solid var(--border);}
-    .mini-cal-header button{background:none;border:none;cursor:pointer;font-size:14px;color:var(--navy);padding:0.1rem 0.4rem;border-radius:3px;}
+    .mini-cal-header button{background:none;border:none;cursor:pointer;font-size:16px;color:var(--navy);padding:0.2rem 0.6rem;border-radius:3px;line-height:1;}
     .mini-cal-header button:hover{background:var(--border);}
     .mini-cal-header .month-label{font-weight:600;font-size:13px;}
-    .mini-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
-    .mini-cal-day-hdr{text-align:center;padding:0.3rem;font-size:11px;font-weight:600;color:var(--muted);background:var(--bg);}
-    .mini-cal-day{text-align:center;padding:0.35rem;font-size:12px;cursor:pointer;border-radius:50%;margin:2px auto;width:28px;height:28px;display:flex;align-items:center;justify-content:center;transition:background 0.1s;}
+    .mini-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);width:100%;}
+    .mini-cal-day-hdr{text-align:center;padding:0.4rem 0;font-size:11px;font-weight:600;color:var(--muted);background:var(--bg);}
+    .mini-cal-day{text-align:center;font-size:12px;cursor:pointer;border-radius:50%;margin:3px auto;width:32px;height:32px;display:flex;align-items:center;justify-content:center;transition:background 0.1s;}
     .mini-cal-day:hover{background:var(--blue-light);}
-    .mini-cal-day.selected{background:var(--navy);color:#fff;border-radius:50%;}
+    .mini-cal-day.selected{background:var(--navy);color:#fff;}
     .mini-cal-day.today{border:2px solid var(--blue);color:var(--blue);font-weight:700;}
     .mini-cal-day.other-month{color:#ccc;}
-    .mini-cal-day.weekend{color:#aaa;}
+    .mini-cal-day.weekend{color:#bbb;}
     .mini-cal-day.selected.weekend{background:var(--navy);color:#fff;}
     .selected-dates-preview{display:flex;flex-wrap:wrap;gap:0.3rem;margin-top:0.5rem;min-height:24px;}
     .date-chip{background:var(--blue-light);color:#1a56a0;border-radius:20px;padding:0.15rem 0.5rem;font-size:11px;display:flex;align-items:center;gap:0.3rem;}
@@ -261,7 +261,7 @@
 
   <!-- ── LEAVE UPDATE PANEL ── -->
   <div class="panel active" id="panel-leave">
-    <div style="display:grid;grid-template-columns:340px 1fr;gap:1.5rem;align-items:start;">
+    <div style="display:grid;grid-template-columns:420px 1fr;gap:1.5rem;align-items:start;">
 
       <!-- Left: Add Leave Form -->
       <div class="card">
@@ -276,20 +276,18 @@
           </div>
 
           <!-- Mini calendar for multi-date select -->
-          <div class="form-row" style="align-items:flex-start;">
-            <label style="margin-top:0.4rem;">Date(s):</label>
-            <div style="flex:1;">
-              <div class="mini-cal" id="add-mini-cal">
-                <div class="mini-cal-header">
-                  <button id="cal-prev">‹</button>
-                  <span class="month-label" id="cal-month-label"></span>
-                  <button id="cal-next">›</button>
-                </div>
-                <div class="mini-cal-grid" id="cal-day-headers"></div>
-                <div class="mini-cal-grid" id="cal-days"></div>
+          <div style="margin-bottom:0.85rem;">
+            <div style="font-weight:500;color:var(--text);font-size:13px;margin-bottom:0.45rem;">Date(s):</div>
+            <div class="mini-cal" id="add-mini-cal">
+              <div class="mini-cal-header">
+                <button id="cal-prev">‹</button>
+                <span class="month-label" id="cal-month-label"></span>
+                <button id="cal-next">›</button>
               </div>
-              <div class="selected-dates-preview" id="selected-dates-preview"></div>
+              <div class="mini-cal-grid" id="cal-day-headers"></div>
+              <div class="mini-cal-grid" id="cal-days"></div>
             </div>
+            <div class="selected-dates-preview" id="selected-dates-preview"></div>
           </div>
 
           <div class="form-row">
