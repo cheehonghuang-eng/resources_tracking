@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resources Tracking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root{
+      --navy:#1e3a5f;
+      --navy-light:#2d5282;
+      --blue:#4a90d9;
+      --blue-light:#e8f0fa;
+      --green:#4a7c59;
+      --green-light:#c8e6c9;
+      --orange:#d4820a;
+      --orange-light:#ffe0b2;
+      --red:#c0392b;
+      --red-light:#ffcdd2;
+      --purple:#7b5ea7;
+      --purple-light:#e8d5f5;
+      --teal:#2a7f7f;
+      --teal-light:#b2ebf2;
+      --bg:#f4f6f9;
+      --white:#ffffff;
+      --border:#d0d7e3;
+      --text:#1a2535;
+      --muted:#6b7a99;
+      --radius:8px;
+    }
+
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
+
+    /* ── TOPBAR ── */
+    .topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;height:48px;gap:0.5rem;}
+    .topbar .home{display:flex;align-items:center;gap:0.4rem;color:var(--navy);font-weight:600;font-size:13px;text-decoration:none;margin-right:1rem;}
+    .topbar .home svg{width:16px;height:16px;}
+
+    /* ── NAV TABS ── */
+    .nav-tabs{display:flex;gap:0.5rem;flex:1;}
+    .nav-tab{padding:0.4rem 1rem;border:1px solid var(--border);border-radius:4px;background:var(--white);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;}
+    .nav-tab:hover{background:var(--blue-light);border-color:var(--blue);}
+    .nav-tab.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+    .user-info{font-size:12px;color:var(--muted);white-space:nowrap;}
+
+    /* ── MAIN ── */
+    .main{padding:1.5rem;max-width:1200px;margin:0 auto;}
+
+    /* ── PANELS ── */
+    .panel{display:none;}
+    .panel.active{display:block;}
+
+    /* ── CARD ── */
+    .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.5rem;}
+    .card-header{background:var(--navy);color:#fff;padding:0.75rem 1.2rem;font-weight:600;font-size:14px;}
+    .card-body{padding:1.2rem;}
+
+    /* ── FORM ── */
+    .form-row{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:0.5rem;margin-bottom:0.85rem;}
+    .form-row label{font-weight:500;color:var(--text);font-size:13px;}
+    .form-row select,.form-row input[type="text"],.form-row input[type="date"]{
+      width:100%;padding:0.45rem 0.7rem;border:1px solid var(--border);border-radius:4px;
+      font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--white);outline:none;
+      transition:border-color 0.15s;
+    }
+    .form-row select:focus,.form-row input:focus{border-color:var(--blue);}
+    .duration-opts{display:flex;gap:1rem;align-items:center;}
+    .duration-opts label{font-weight:400;display:flex;align-items:center;gap:0.3rem;cursor:pointer;}
+    .form-row input[type="text"].remarks{width:100%;}
+
+    /* ── BUTTONS ── */
+    .btn{padding:0.45rem 1.1rem;border-radius:4px;border:1px solid var(--border);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;}
+    .btn-primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+    .btn-primary:hover{background:var(--navy-light);}
+    .btn-secondary{background:var(--white);color:var(--text);}
+    .btn-secondary:hover{background:var(--bg);}
+    .btn-danger{background:var(--red);color:#fff;border-color:var(--red);}
+    .btn-sm{padding:0.25rem 0.6rem;font-size:12px;}
+    .btn-row-end{display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1rem;}
+
+    /* ── LEAVE TABLE ── */
+    .leave-table{width:100%;border-collapse:collapse;font-size:13px;}
+    .leave-table th{background:var(--bg);padding:0.5rem 0.75rem;text-align:left;font-weight:600;border-bottom:1px solid var(--border);color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:0.04em;}
+    .leave-table td{padding:0.5rem 0.75rem;border-bottom:1px solid #eef0f5;vertical-align:middle;}
+    .leave-table tr:last-child td{border-bottom:none;}
+    .leave-table tr:hover td{background:var(--blue-light);}
+    .edit-icon{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:0.1rem 0.3rem;border-radius:3px;}
+    .edit-icon:hover{color:var(--blue);background:var(--blue-light);}
+
+    /* ── REASON BADGE ── */
+    .badge{display:inline-block;padding:0.2rem 0.55rem;border-radius:20px;font-size:11px;font-weight:600;}
+    .badge-pto{background:var(--blue-light);color:#1a56a0;}
+    .badge-mc{background:var(--orange-light);color:#a05a00;}
+    .badge-cc{background:var(--purple-light);color:var(--purple);}
+    .badge-training{background:var(--teal-light);color:var(--teal);}
+    .badge-project{background:#fff3e0;color:#e65100;}
+    .badge-hl{background:var(--green-light);color:var(--green);}
+    .badge-others{background:#f3f4f6;color:#555;}
+
+    /* ── CALENDAR PANEL ── */
+    .cal-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+    .cal-controls select{padding:0.4rem 0.8rem;border:1px solid var(--border);border-radius:4px;font-family:'Inter',sans-serif;font-size:13px;outline:none;}
+
+    .month-block{margin-bottom:1.5rem;}
+    .month-title{background:var(--navy);color:#fff;text-align:center;padding:0.4rem;font-weight:600;font-size:13px;}
+
+    .gantt-wrap{overflow-x:auto;}
+    .gantt-table{border-collapse:collapse;font-size:12px;min-width:600px;}
+    .gantt-table th,.gantt-table td{border:1px solid var(--border);padding:0;height:28px;}
+    .gantt-table .col-team{width:90px;padding:0 0.5rem;font-weight:600;background:var(--bg);font-size:12px;position:sticky;left:0;z-index:2;border-right:2px solid var(--border);}
+    .gantt-table .col-name{width:90px;padding:0 0.5rem;background:var(--white);position:sticky;left:90px;z-index:2;border-right:2px solid var(--border);font-size:12px;}
+    .gantt-table .day-hdr{text-align:center;width:22px;background:var(--bg);font-weight:600;font-size:11px;color:var(--muted);}
+    .gantt-table .day-hdr.weekend{background:#f0f0f0;color:#aaa;}
+    .gantt-table .day-hdr.today-hdr{background:var(--blue);color:#fff;}
+    .gantt-cell{width:22px;text-align:center;cursor:default;}
+    .gantt-cell.pto{background:#4a90d9;}
+    .gantt-cell.mc,.gantt-cell.hl{background:#d4820a;}
+    .gantt-cell.cc,.gantt-cell.training,.gantt-cell.project,.gantt-cell.others{background:#4a7c59;}
+    .gantt-cell.ph{background:#ddd;font-size:10px;color:#888;}
+    .gantt-cell.weekend-cell{background:#fafafa;}
+
+    .legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.75rem;font-size:12px;align-items:center;}
+    .legend-item{display:flex;align-items:center;gap:0.3rem;}
+    .legend-dot{width:14px;height:14px;border-radius:3px;}
+
+    /* ── ASSIGNMENT PANEL ── */
+    .assign-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+    .assign-controls select{padding:0.4rem 0.8rem;border:1px solid var(--border);border-radius:4px;font-family:'Inter',sans-serif;font-size:13px;outline:none;}
+    .week-nav{display:flex;align-items:center;gap:0.5rem;}
+    .week-nav button{padding:0.3rem 0.6rem;border:1px solid var(--border);border-radius:4px;background:var(--white);cursor:pointer;font-size:13px;}
+    .week-nav button:hover{background:var(--bg);}
+    .week-label{font-weight:600;font-size:13px;padding:0.3rem 0.7rem;border:1px solid var(--border);border-radius:4px;background:var(--white);}
+
+    .assign-table{width:100%;border-collapse:collapse;font-size:13px;}
+    .assign-table th{padding:0.55rem 0.75rem;text-align:center;font-weight:600;background:var(--bg);border:1px solid var(--border);font-size:12px;}
+    .assign-table th.emp-col{text-align:left;width:120px;position:sticky;left:0;z-index:2;background:var(--bg);}
+    .assign-table td{padding:0.3rem 0.5rem;border:1px solid var(--border);text-align:center;vertical-align:middle;}
+    .assign-table td.emp-name{text-align:left;font-weight:500;position:sticky;left:0;z-index:2;background:var(--white);}
+    .assign-table tr:hover td{background:var(--blue-light);}
+    .assign-table tr:hover td.emp-name{background:var(--blue-light);}
+
+    .station-select{width:100%;padding:0.25rem 0.3rem;border:1px solid var(--border);border-radius:3px;font-family:'Inter',sans-serif;font-size:12px;background:var(--white);outline:none;}
+    .station-select:focus{border-color:var(--blue);}
+
+    .leave-cell{padding:0.25rem 0.5rem;border-radius:3px;font-size:12px;font-weight:600;display:inline-block;}
+    .leave-cell.pto{background:var(--red-light);color:var(--red);}
+    .leave-cell.mc{background:var(--orange-light);color:var(--orange);}
+    .leave-cell.training{background:var(--teal-light);color:var(--teal);}
+    .leave-cell.project{background:#fff3e0;color:#e65100;}
+    .leave-cell.cc{background:var(--purple-light);color:var(--purple);}
+    .leave-cell.hl{background:var(--green-light);color:var(--green);}
+    .leave-cell.others{background:#f3f4f6;color:#555;}
+    .leave-cell.halfday{font-size:10px;}
+
+    .assign-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.75rem;font-size:12px;align-items:center;}
+
+    /* ── TOAST ── */
+    #toast{
+      position:fixed;bottom:1.5rem;right:1.5rem;
+      padding:0.7rem 1.2rem;border-radius:6px;font-size:13px;font-weight:500;
+      z-index:999;display:none;align-items:center;gap:0.5rem;
+      box-shadow:0 4px 16px rgba(0,0,0,0.15);
+    }
+    .toast-success{background:#e8f5e9;border:1px solid #4caf50;color:#2e7d32;display:flex!important;}
+    .toast-error  {background:#ffebee;border:1px solid #ef5350;color:#c62828;display:flex!important;}
+    .toast-info   {background:var(--blue-light);border:1px solid var(--blue);color:#1a56a0;display:flex!important;}
+
+    /* ── MODAL ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;display:none;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--white);border-radius:var(--radius);padding:1.5rem;width:420px;max-width:95vw;box-shadow:0 8px 32px rgba(0,0,0,0.2);}
+    .modal h3{font-size:15px;font-weight:600;margin-bottom:1.2rem;color:var(--navy);}
+    .modal-actions{display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1.2rem;}
+
+    /* ── SPINNER ── */
+    .spinner{width:14px;height:14px;border:2px solid rgba(0,0,0,0.15);border-top-color:var(--navy);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    .section-title{font-weight:700;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin:1.2rem 0 0.6rem;}
+
+    /* date multi-select mini calendar */
+    .mini-cal{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;width:100%;}
+    .mini-cal-header{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.75rem;background:var(--bg);border-bottom:1px solid var(--border);}
+    .mini-cal-header button{background:none;border:none;cursor:pointer;font-size:14px;color:var(--navy);padding:0.1rem 0.4rem;border-radius:3px;}
+    .mini-cal-header button:hover{background:var(--border);}
+    .mini-cal-header .month-label{font-weight:600;font-size:13px;}
+    .mini-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
+    .mini-cal-day-hdr{text-align:center;padding:0.3rem;font-size:11px;font-weight:600;color:var(--muted);background:var(--bg);}
+    .mini-cal-day{text-align:center;padding:0.35rem;font-size:12px;cursor:pointer;border-radius:50%;margin:2px auto;width:28px;height:28px;display:flex;align-items:center;justify-content:center;transition:background 0.1s;}
+    .mini-cal-day:hover{background:var(--blue-light);}
+    .mini-cal-day.selected{background:var(--navy);color:#fff;border-radius:50%;}
+    .mini-cal-day.today{border:2px solid var(--blue);color:var(--blue);font-weight:700;}
+    .mini-cal-day.other-month{color:#ccc;}
+    .mini-cal-day.weekend{color:#aaa;}
+    .mini-cal-day.selected.weekend{background:var(--navy);color:#fff;}
+    .selected-dates-preview{display:flex;flex-wrap:wrap;gap:0.3rem;margin-top:0.5rem;min-height:24px;}
+    .date-chip{background:var(--blue-light);color:#1a56a0;border-radius:20px;padding:0.15rem 0.5rem;font-size:11px;display:flex;align-items:center;gap:0.3rem;}
+    .date-chip button{background:none;border:none;cursor:pointer;color:#1a56a0;font-size:11px;line-height:1;padding:0;}
+  </style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- Modal for Edit Leave -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3>✏️ Edit Leave Entry</h3>
+    <input type="hidden" id="edit-id"/>
+    <div class="form-row">
+      <label>Date</label>
+      <input type="date" id="edit-date"/>
+    </div>
+    <div class="form-row">
+      <label>Reason</label>
+      <select id="edit-reason">
+        <option>PTO</option><option>MC</option><option>CC</option>
+        <option>Training</option><option>Project</option><option>HL</option><option>Others</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Duration</label>
+      <div class="duration-opts">
+        <label><input type="radio" name="edit-dur" value="Full" checked> Full day</label>
+        <label><input type="radio" name="edit-dur" value="AM"> AM</label>
+        <label><input type="radio" name="edit-dur" value="PM"> PM</label>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Remarks</label>
+      <input type="text" id="edit-remarks" placeholder="Optional remarks"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-danger btn-sm" id="btn-delete-leave">🗑 Delete</button>
+      <button class="btn btn-secondary" id="btn-edit-cancel">Cancel</button>
+      <button class="btn btn-primary" id="btn-edit-save">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a class="home" href="#">
+    <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 3L2 9h2v8h5v-5h2v5h5V9h2L10 3z"/></svg>
+    Resources Tracking
+  </a>
+  <nav class="nav-tabs">
+    <button class="nav-tab" data-tab="reporting">Reporting</button>
+    <button class="nav-tab active" data-tab="leave">Leave Update</button>
+    <button class="nav-tab" data-tab="calendar">Calendar</button>
+    <button class="nav-tab" data-tab="assignment">Work Center Assignment</button>
+    <button class="nav-tab" data-tab="utilization">Utilization Dashboard</button>
+  </nav>
+  <div class="user-info">Logged in as: <strong>Admin</strong></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ── LEAVE UPDATE PANEL ── -->
+  <div class="panel active" id="panel-leave">
+    <div style="display:grid;grid-template-columns:340px 1fr;gap:1.5rem;align-items:start;">
+
+      <!-- Left: Add Leave Form -->
+      <div class="card">
+        <div class="card-header">Add Leave</div>
+        <div class="card-body">
+
+          <div class="form-row">
+            <label>Name:</label>
+            <select id="add-name">
+              <option value="">Select employee…</option>
+            </select>
+          </div>
+
+          <!-- Mini calendar for multi-date select -->
+          <div class="form-row" style="align-items:flex-start;">
+            <label style="margin-top:0.4rem;">Date(s):</label>
+            <div style="flex:1;">
+              <div class="mini-cal" id="add-mini-cal">
+                <div class="mini-cal-header">
+                  <button id="cal-prev">‹</button>
+                  <span class="month-label" id="cal-month-label"></span>
+                  <button id="cal-next">›</button>
+                </div>
+                <div class="mini-cal-grid" id="cal-day-headers"></div>
+                <div class="mini-cal-grid" id="cal-days"></div>
+              </div>
+              <div class="selected-dates-preview" id="selected-dates-preview"></div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label>Reason:</label>
+            <select id="add-reason">
+              <option value="">Select reason</option>
+              <option>PTO</option><option>MC</option><option>CC</option>
+              <option>Training</option><option>Project</option><option>HL</option><option>Others</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label>Duration:</label>
+            <div class="duration-opts">
+              <label><input type="radio" name="add-dur" value="Full" checked> Full day</label>
+              <label><input type="radio" name="add-dur" value="Half day"> Half day</label>
+              <label><input type="radio" name="add-dur" value="AM"> AM</label>
+              <label><input type="radio" name="add-dur" value="PM"> PM</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label>Remarks</label>
+            <input type="text" id="add-remarks" placeholder="Optional"/>
+          </div>
+
+          <div class="btn-row-end">
+            <button class="btn btn-secondary" id="btn-clear-form">Cancel</button>
+            <button class="btn btn-primary" id="btn-save-leave">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Recent Entries -->
+      <div>
+        <div class="card">
+          <div class="card-header">My Recent Entries</div>
+          <div class="card-body" style="padding:0;">
+            <div style="padding:0.75rem 1rem;display:flex;gap:0.5rem;align-items:center;border-bottom:1px solid var(--border);">
+              <select id="filter-employee" style="padding:0.35rem 0.6rem;border:1px solid var(--border);border-radius:4px;font-size:13px;flex:1;">
+                <option value="">All Employees</option>
+              </select>
+              <select id="filter-reason" style="padding:0.35rem 0.6rem;border:1px solid var(--border);border-radius:4px;font-size:13px;">
+                <option value="">All Reasons</option>
+                <option>PTO</option><option>MC</option><option>CC</option>
+                <option>Training</option><option>Project</option><option>HL</option><option>Others</option>
+              </select>
+              <button class="btn btn-secondary btn-sm" id="btn-refresh-leaves">↻</button>
+            </div>
+            <div id="leave-table-wrap" style="overflow-x:auto;">
+              <table class="leave-table">
+                <thead>
+                  <tr>
+                    <th>Employee</th>
+                    <th>Date</th>
+                    <th>Reason</th>
+                    <th>Duration</th>
+                    <th>Remarks</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="leave-tbody">
+                  <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted);">
+                    <span class="spinner"></span> Loading…
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CALENDAR PANEL ── -->
+  <div class="panel" id="panel-calendar">
+    <div class="cal-controls">
+      <label style="font-weight:500;">Select quarter:</label>
+      <select id="quarter-select">
+        <option value="Q1-2026">Q1 2026 (Jan–Mar)</option>
+        <option value="Q2-2026">Q2 2026 (Apr–Jun)</option>
+        <option value="Q3-2026">Q3 2026 (Jul–Sep)</option>
+        <option value="Q4-2026">Q4 2026 (Oct–Dec)</option>
+        <option value="Q1-2025">Q1 2025 (Jan–Mar)</option>
+        <option value="Q2-2025">Q2 2025 (Apr–Jun)</option>
+        <option value="Q3-2025">Q3 2025 (Jul–Sep)</option>
+        <option value="Q4-2025">Q4 2025 (Oct–Dec)</option>
+      </select>
+      <select id="view-mode">
+        <option value="quarter">Quarter (3 months)</option>
+        <option value="month">Single Month</option>
+      </select>
+      <select id="month-select" style="display:none;">
+        <option value="0">January</option><option value="1">February</option>
+        <option value="2">March</option><option value="3">April</option>
+        <option value="4">May</option><option value="5">June</option>
+        <option value="6">July</option><option value="7">August</option>
+        <option value="8">September</option><option value="9">October</option>
+        <option value="10">November</option><option value="11">December</option>
+      </select>
+      <button class="btn btn-secondary btn-sm" id="btn-refresh-cal">↻ Refresh</button>
+    </div>
+    <div id="calendar-container"></div>
+    <div class="legend">
+      <span style="font-weight:600;font-size:12px;">Legend:</span>
+      <div class="legend-item"><div class="legend-dot" style="background:#4a90d9"></div> PTO</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d4820a"></div> MC / HL</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#4a7c59"></div> Others</div>
+    </div>
+  </div>
+
+  <!-- ── WORK CENTER ASSIGNMENT PANEL ── -->
+  <div class="panel" id="panel-assignment">
+    <div class="assign-controls">
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--navy)"><rect x="3" y="3" width="5" height="5" rx="1"/><rect x="10" y="3" width="5" height="5" rx="1"/><rect x="17" y="3" width="4" height="5" rx="1"/><rect x="3" y="10" width="5" height="5" rx="1"/><rect x="10" y="10" width="5" height="5" rx="1"/></svg>
+        <span id="assign-week-title" style="font-weight:600;font-size:14px;"></span>
+      </div>
+      <div class="week-nav">
+        <button id="btn-prev-week">‹ Previous</button>
+        <span class="week-label" id="week-range-label"></span>
+        <button id="btn-next-week">Next ›</button>
+      </div>
+      <select id="assign-team-filter">
+        <option value="">Team: All Teams</option>
+      </select>
+      <button class="btn btn-primary btn-sm" id="btn-save-assignments">💾 Save Assignments</button>
+    </div>
+
+    <div class="card">
+      <div class="card-body" style="padding:0;overflow-x:auto;">
+        <table class="assign-table" id="assign-table">
+          <thead id="assign-thead"></thead>
+          <tbody id="assign-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="assign-legend">
+      <span style="font-weight:600;">Legend:</span>
+      <div class="legend-item"><div class="legend-dot" style="background:#c8e6c9"></div> Gel Bead</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#bbdefb"></div> Chip</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffe0b2"></div> Packaging</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffcdd2"></div> PTO</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#b2ebf2"></div> Training</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff3e0"></div> Project</div>
+    </div>
+  </div>
+
+  <!-- ── REPORTING / UTILIZATION ── -->
+  <div class="panel" id="panel-reporting">
+    <div class="card"><div class="card-body" style="text-align:center;padding:3rem;color:var(--muted);">
+      📊 Reporting dashboard — coming soon
+    </div></div>
+  </div>
+  <div class="panel" id="panel-utilization">
+    <div class="card"><div class="card-body" style="text-align:center;padding:3rem;color:var(--muted);">
+      📈 Utilization Dashboard — coming soon
+    </div></div>
+  </div>
+
+</div><!-- /main -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://utonakdztilagefebtal.supabase.co'
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0b25ha2R6dGlsYWdlZmVidGFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NjM5MDYsImV4cCI6MjA4ODMzOTkwNn0.NSUOY6aE4SmOk3RawwOCfnI4PIO2lZRaJTbh787cG-4'
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+// ── Default employees (seeded locally if DB table not yet created) ──────────
+const DEFAULT_EMPLOYEES = [
+  {id:'emp-1', name:'Adam',      default_station:'Chip',      team:'Team A'},
+  {id:'emp-2', name:'Zhi Jian',  default_station:'Chip',      team:'Team A'},
+  {id:'emp-3', name:'Wei Xiong', default_station:'Gel Bead',  team:'Team A'},
+  {id:'emp-4', name:'YanLing',   default_station:'Gel Bead',  team:'Team B'},
+  {id:'emp-5', name:'Tsek Loong',default_station:'Chip',      team:'Team B'},
+  {id:'emp-6', name:'Jenny',     default_station:'Gel Bead',  team:'Team B'},
+  {id:'emp-7', name:'Boon Hing', default_station:'Chip',      team:'Team C'},
+  {id:'emp-8', name:'Mandy',     default_station:'Chip',      team:'Team C'},
+  {id:'emp-9', name:'Grace',     default_station:'Packaging', team:'Team C'},
+]
+const STATIONS = ['Gel Bead','Chip','Packaging','Injection 1','Injection 2','QC','Warehouse']
+const REASONS  = ['PTO','MC','CC','Training','Project','HL','Others']
+
+let employees   = [...DEFAULT_EMPLOYEES]
+let allLeaves   = []   // [{id, employee_id, employee_name, date, reason, duration, remarks}]
+let assignments = {}   // key: "emp_date" → station name
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NAV TABS
+// ═══════════════════════════════════════════════════════════════════════════
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'))
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'))
+    tab.classList.add('active')
+    const key = tab.dataset.tab
+    const panelMap = {reporting:'reporting',leave:'leave',calendar:'calendar',assignment:'assignment',utilization:'utilization'}
+    document.getElementById('panel-'+panelMap[key]).classList.add('active')
+    if(key==='calendar')   renderCalendar()
+    if(key==='assignment') renderAssignment()
+  })
+})
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadEmployees()
+  populateEmployeeDropdowns()
+  initMiniCal()
+  await loadLeaves()
+  renderCalendar()
+  initWeekNav()
+})
+
+async function loadEmployees() {
+  try {
+    const {data,error} = await sb.from('employees').select('*').order('name')
+    if(!error && data && data.length>0) employees = data
+  } catch(e) { /* use defaults */ }
+}
+
+function populateEmployeeDropdowns() {
+  const selects = ['add-name','filter-employee','assign-team-filter']
+  employees.forEach(emp => {
+    document.getElementById('add-name').innerHTML += `<option value="${emp.id}">${emp.name}</option>`
+    document.getElementById('filter-employee').innerHTML += `<option value="${emp.id}">${emp.name}</option>`
+  })
+  // teams
+  const teams = [...new Set(employees.map(e=>e.team||''))]
+  teams.filter(Boolean).forEach(t => {
+    document.getElementById('assign-team-filter').innerHTML += `<option value="${t}">Team: ${t}</option>`
+  })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MINI CALENDAR (multi-select dates)
+// ═══════════════════════════════════════════════════════════════════════════
+let calViewDate   = new Date()
+let selectedDates = new Set() // strings "YYYY-MM-DD"
+
+function initMiniCal() {
+  calViewDate = new Date()
+  renderMiniCal()
+  document.getElementById('cal-prev').addEventListener('click', () => {
+    calViewDate.setMonth(calViewDate.getMonth()-1)
+    renderMiniCal()
+  })
+  document.getElementById('cal-next').addEventListener('click', () => {
+    calViewDate.setMonth(calViewDate.getMonth()+1)
+    renderMiniCal()
+  })
+}
+
+function renderMiniCal() {
+  const y = calViewDate.getFullYear(), m = calViewDate.getMonth()
+  document.getElementById('cal-month-label').textContent =
+    new Date(y,m,1).toLocaleDateString('en-SG',{month:'long',year:'numeric'})
+
+  const hdrs = document.getElementById('cal-day-headers')
+  hdrs.innerHTML = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+    .map(d=>`<div class="mini-cal-day-hdr">${d}</div>`).join('')
+
+  const firstDay = new Date(y,m,1).getDay()
+  const daysInMonth = new Date(y,m+1,0).getDate()
+  const today = dateStr(new Date())
+
+  let html = ''
+  for(let i=0;i<firstDay;i++) {
+    const prevDay = new Date(y,m,-(firstDay-i-1))
+    html += `<div class="mini-cal-day other-month">${prevDay.getDate()}</div>`
+  }
+  for(let d=1;d<=daysInMonth;d++) {
+    const ds = dateStr(new Date(y,m,d))
+    const dow = new Date(y,m,d).getDay()
+    const isWeekend = dow===0||dow===6
+    const classes = ['mini-cal-day',
+      selectedDates.has(ds)?'selected':'',
+      ds===today?'today':'',
+      isWeekend?'weekend':''
+    ].filter(Boolean).join(' ')
+    html += `<div class="${classes}" data-date="${ds}">${d}</div>`
+  }
+  document.getElementById('cal-days').innerHTML = html
+
+  document.querySelectorAll('#cal-days .mini-cal-day[data-date]').forEach(el => {
+    el.addEventListener('click', () => {
+      const ds = el.dataset.date
+      if(selectedDates.has(ds)) selectedDates.delete(ds)
+      else selectedDates.add(ds)
+      renderMiniCal()
+      renderSelectedDatesPreview()
+    })
+  })
+}
+
+function renderSelectedDatesPreview() {
+  const sorted = [...selectedDates].sort()
+  document.getElementById('selected-dates-preview').innerHTML = sorted.map(ds =>
+    `<div class="date-chip">${formatDateShort(ds)}
+      <button data-ds="${ds}">×</button>
+    </div>`
+  ).join('')
+  document.querySelectorAll('#selected-dates-preview button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedDates.delete(btn.dataset.ds)
+      renderMiniCal()
+      renderSelectedDatesPreview()
+    })
+  })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LEAVES — LOAD
+// ═══════════════════════════════════════════════════════════════════════════
+async function loadLeaves() {
+  try {
+    const {data,error} = await sb.from('leaves').select('*').order('date',{ascending:false})
+    if(error) throw error
+    allLeaves = (data||[]).map(l => ({
+      ...l,
+      employee_name: employees.find(e=>e.id===l.employee_id)?.name || l.employee_id
+    }))
+  } catch(e) {
+    showToast('Could not load leaves: '+e.message,'error')
+    allLeaves = []
+  }
+  renderLeaveTable()
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LEAVES — RENDER TABLE
+// ═══════════════════════════════════════════════════════════════════════════
+function renderLeaveTable() {
+  const empFilter    = document.getElementById('filter-employee').value
+  const reasonFilter = document.getElementById('filter-reason').value
+  let rows = allLeaves.filter(l =>
+    (!empFilter    || l.employee_id===empFilter) &&
+    (!reasonFilter || l.reason===reasonFilter)
+  )
+
+  if(rows.length===0) {
+    document.getElementById('leave-tbody').innerHTML =
+      `<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted);">No entries found</td></tr>`
+    return
+  }
+
+  document.getElementById('leave-tbody').innerHTML = rows.map(l => `
+    <tr>
+      <td><strong>${esc(l.employee_name)}</strong></td>
+      <td>${formatDateShort(l.date)}</td>
+      <td><span class="badge badge-${l.reason.toLowerCase()}">${l.reason}</span></td>
+      <td>${l.duration||'Full'}</td>
+      <td>${l.remarks?esc(l.remarks):'<span style="color:var(--muted)">—</span>'}</td>
+      <td><button class="edit-icon" data-id="${l.id}">✏️</button></td>
+    </tr>`).join('')
+
+  document.querySelectorAll('.edit-icon').forEach(btn => {
+    btn.addEventListener('click', () => openEditModal(btn.dataset.id))
+  })
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LEAVES — SAVE (multiple dates)
+// ═══════════════════════════════════════════════════════════════════════════
+document.getElementById('btn-save-leave').addEventListener('click', async () => {
+  const empId    = document.getElementById('add-name').value
+  const reason   = document.getElementById('add-reason').value
+  const duration = document.querySelector('input[name="add-dur"]:checked')?.value||'Full'
+  const remarks  = document.getElementById('add-remarks').value.trim()
+  const dates    = [...selectedDates]
+
+  if(!empId)           { showToast('Please select an employee','error'); return }
+  if(dates.length===0) { showToast('Please select at least one date','error'); return }
+  if(!reason)          { showToast('Please select a reason','error'); return }
+
+  const btn = document.getElementById('btn-save-leave')
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Saving…'
+
+  const rows = dates.map(date => ({ employee_id:empId, date, reason, duration, remarks:remarks||null }))
+
+  try {
+    const {error} = await sb.from('leaves').insert(rows)
+    if(error) throw error
+    showToast(`${dates.length} leave entry(s) saved ✓`,'success')
+    clearAddForm()
+    await loadLeaves()
+    renderCalendar()
+  } catch(e) {
+    showToast('Save failed: '+e.message,'error')
+  } finally {
+    btn.disabled=false; btn.innerHTML='Save'
+  }
+})
+
+function clearAddForm() {
+  document.getElementById('add-name').value    = ''
+  document.getElementById('add-reason').value  = ''
+  document.getElementById('add-remarks').value = ''
+  document.querySelector('input[name="add-dur"][value="Full"]').checked = true
+  selectedDates.clear()
+  renderMiniCal()
+  renderSelectedDatesPreview()
+}
+
+document.getElementById('btn-clear-form').addEventListener('click', clearAddForm)
+document.getElementById('btn-refresh-leaves').addEventListener('click', loadLeaves)
+document.getElementById('filter-employee').addEventListener('change', renderLeaveTable)
+document.getElementById('filter-reason').addEventListener('change', renderLeaveTable)
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EDIT MODAL
+// ═══════════════════════════════════════════════════════════════════════════
+function openEditModal(id) {
+  const leave = allLeaves.find(l=>l.id===id)
+  if(!leave) return
+  document.getElementById('edit-id').value      = id
+  document.getElementById('edit-date').value    = leave.date
+  document.getElementById('edit-reason').value  = leave.reason
+  document.getElementById('edit-remarks').value = leave.remarks||''
+  const dur = leave.duration||'Full'
+  const radio = document.querySelector(`input[name="edit-dur"][value="${dur}"]`)
+  if(radio) radio.checked=true
+  document.getElementById('edit-modal').classList.add('open')
+}
+
+document.getElementById('btn-edit-cancel').addEventListener('click', () => {
+  document.getElementById('edit-modal').classList.remove('open')
+})
+
+document.getElementById('btn-edit-save').addEventListener('click', async () => {
+  const id       = document.getElementById('edit-id').value
+  const date     = document.getElementById('edit-date').value
+  const reason   = document.getElementById('edit-reason').value
+  const duration = document.querySelector('input[name="edit-dur"]:checked')?.value||'Full'
+  const remarks  = document.getElementById('edit-remarks').value.trim()
+
+  try {
+    const {error} = await sb.from('leaves').update({date,reason,duration,remarks:remarks||null}).eq('id',id)
+    if(error) throw error
+    showToast('Leave updated ✓','success')
+    document.getElementById('edit-modal').classList.remove('open')
+    await loadLeaves()
+    renderCalendar()
+  } catch(e) { showToast('Update failed: '+e.message,'error') }
+})
+
+document.getElementById('btn-delete-leave').addEventListener('click', async () => {
+  if(!confirm('Delete this leave entry?')) return
+  const id = document.getElementById('edit-id').value
+  try {
+    const {error} = await sb.from('leaves').delete().eq('id',id)
+    if(error) throw error
+    showToast('Leave deleted','info')
+    document.getElementById('edit-modal').classList.remove('open')
+    await loadLeaves()
+    renderCalendar()
+  } catch(e) { showToast('Delete failed: '+e.message,'error') }
+})
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CALENDAR VIEW
+// ═══════════════════════════════════════════════════════════════════════════
+document.getElementById('quarter-select').addEventListener('change', renderCalendar)
+document.getElementById('view-mode').addEventListener('change', () => {
+  const mode = document.getElementById('view-mode').value
+  document.getElementById('month-select').style.display = mode==='month'?'':'none'
+  renderCalendar()
+})
+document.getElementById('month-select').addEventListener('change', renderCalendar)
+document.getElementById('btn-refresh-cal').addEventListener('click', async () => {
+  await loadLeaves(); renderCalendar()
+})
+
+function renderCalendar() {
+  const mode = document.getElementById('view-mode').value
+  const qVal = document.getElementById('quarter-select').value  // e.g. "Q1-2026"
+  const [q, yr] = qVal.split('-')
+  const year = parseInt(yr)
+  const quarterMonths = { Q1:[0,1,2], Q2:[3,4,5], Q3:[6,7,8], Q4:[9,10,11] }
+
+  let months
+  if(mode==='month') {
+    const m = parseInt(document.getElementById('month-select').value)
+    months = [m]
+  } else {
+    months = quarterMonths[q]
+  }
+
+  const container = document.getElementById('calendar-container')
+  container.innerHTML = months.map(m => renderMonthGantt(year, m)).join('')
+}
+
+function renderMonthGantt(year, month) {
+  const daysInMonth = new Date(year, month+1, 0).getDate()
+  const monthName   = new Date(year,month,1).toLocaleDateString('en-SG',{month:'long',year:'numeric'})
+  const today       = dateStr(new Date())
+
+  // Build leave lookup: key = "empId_date" → leave reason
+  const leaveMap = {}
+  allLeaves.forEach(l => { leaveMap[l.employee_id+'_'+l.date] = l })
+
+  const dayHeaders = Array.from({length:daysInMonth},(_,i)=>{
+    const d = new Date(year,month,i+1)
+    const dow = d.getDay()
+    const ds  = dateStr(d)
+    const isToday = ds===today
+    const cls = ['day-hdr', dow===0||dow===6?'weekend':'', isToday?'today-hdr':''].filter(Boolean).join(' ')
+    return `<th class="${cls}">${i+1}</th>`
+  }).join('')
+
+  const rows = employees.map(emp => {
+    const cells = Array.from({length:daysInMonth},(_,i)=>{
+      const d   = new Date(year,month,i+1)
+      const dow = d.getDay()
+      const ds  = dateStr(d)
+      const leave = leaveMap[emp.id+'_'+ds]
+      const isWeekend = dow===0||dow===6
+      if(leave) {
+        const cat = leaveCategory(leave.reason)
+        return `<td class="gantt-cell ${cat}" title="${leave.reason}${leave.duration&&leave.duration!=='Full'?' ('+leave.duration+')':''}" ></td>`
+      }
+      return `<td class="gantt-cell${isWeekend?' weekend-cell':''}"></td>`
+    }).join('')
+    return `<tr>
+      <td class="col-team">${esc(emp.team||'')}</td>
+      <td class="col-name">${esc(emp.name)}</td>
+      ${cells}
+    </tr>`
+  }).join('')
+
+  return `
+    <div class="month-block">
+      <div class="month-title">${monthName}</div>
+      <div class="gantt-wrap">
+        <table class="gantt-table">
+          <thead><tr>
+            <th class="col-team" style="font-size:11px;">TEAM</th>
+            <th class="col-name" style="font-size:11px;">NAME</th>
+            ${dayHeaders}
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`
+}
+
+function leaveCategory(reason) {
+  if(reason==='PTO') return 'pto'
+  if(reason==='MC'||reason==='HL') return 'mc'
+  return 'others'
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// WORK CENTER ASSIGNMENT
+// ═══════════════════════════════════════════════════════════════════════════
+let currentWeekStart = getMonday(new Date())
+
+function initWeekNav() {
+  document.getElementById('btn-prev-week').addEventListener('click', () => {
+    currentWeekStart = addDays(currentWeekStart, -7)
+    renderAssignment()
+  })
+  document.getElementById('btn-next-week').addEventListener('click', () => {
+    currentWeekStart = addDays(currentWeekStart, 7)
+    renderAssignment()
+  })
+  document.getElementById('assign-team-filter').addEventListener('change', renderAssignment)
+  document.getElementById('btn-save-assignments').addEventListener('click', saveAssignments)
+  renderAssignment()
+}
+
+async function renderAssignment() {
+  const weekDays  = Array.from({length:7},(_,i)=>addDays(currentWeekStart,i))
+  const weekDates = weekDays.map(dateStr)
+  const mondayDate= weekDays[0]
+  const sundayDate= weekDays[6]
+
+  // Week label
+  const weekNum   = getWeekNumber(mondayDate)
+  document.getElementById('assign-week-title').textContent =
+    `Resource Assignment — Week ${weekNum.wk.toString().padStart(2,'0')}, ${weekNum.yr}`
+  document.getElementById('week-range-label').textContent =
+    `${fmt(mondayDate)} — ${fmt(sundayDate)}`
+
+  // Load assignments for this week from DB
+  await loadAssignmentsForWeek(weekDates)
+
+  const teamFilter = document.getElementById('assign-team-filter').value
+  const emps = teamFilter ? employees.filter(e=>e.team===teamFilter) : employees
+
+  // Build leave lookup for this week
+  const leaveMap = {}
+  allLeaves.forEach(l => {
+    if(weekDates.includes(l.date)) leaveMap[l.employee_id+'_'+l.date] = l
+  })
+
+  // Header
+  const dayHdrs = weekDays.map((d,i)=>{
+    const dayName = d.toLocaleDateString('en-SG',{weekday:'short'})
+    const dayNum  = d.getDate()
+    const isWeekend = i>=5
+    return `<th style="${isWeekend?'color:#aaa;background:#f9f9f9;':''}">${dayName} ${dayNum}</th>`
+  }).join('')
+
+  document.getElementById('assign-thead').innerHTML =
+    `<tr><th class="emp-col">Employee</th>${dayHdrs}</tr>`
+
+  // Rows
+  document.getElementById('assign-tbody').innerHTML = emps.map(emp => {
+    const cells = weekDays.map((d,i) => {
+      const ds      = dateStr(d)
+      const leave   = leaveMap[emp.id+'_'+ds]
+      const isWeekend = i>=5
+
+      if(isWeekend) return `<td style="background:#fafafa;color:#ccc;">—</td>`
+
+      if(leave) {
+        const hl = leave.duration&&leave.duration!=='Full'?' ('+leave.duration+')':''
+        return `<td><span class="leave-cell ${leave.reason.toLowerCase()}">${leave.reason}${hl}</span></td>`
+      }
+
+      // Get current assignment or default
+      const key     = emp.id+'_'+ds
+      const current = assignments[key] || emp.default_station || ''
+      const options = STATIONS.map(s=>
+        `<option value="${s}" ${s===current?'selected':''}>${s}</option>`
+      ).join('')
+
+      return `<td><select class="station-select" data-emp="${emp.id}" data-date="${ds}"
+        style="background:${stationColor(current)}">
+        ${options}</select></td>`
+    }).join('')
+    return `<tr><td class="emp-name">${esc(emp.name)}</td>${cells}</tr>`
+  }).join('')
+
+  // Color selects on change
+  document.querySelectorAll('.station-select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      sel.style.background = stationColor(sel.value)
+      assignments[sel.dataset.emp+'_'+sel.dataset.date] = sel.value
+    })
+  })
+}
+
+async function loadAssignmentsForWeek(dates) {
+  try {
+    const {data} = await sb.from('assignments')
+      .select('*')
+      .in('date', dates)
+    if(data) data.forEach(a => { assignments[a.employee_id+'_'+a.date] = a.station })
+  } catch(e) { /* ignore */ }
+}
+
+async function saveAssignments() {
+  const btn = document.getElementById('btn-save-assignments')
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Saving…'
+
+  const rows = []
+  document.querySelectorAll('.station-select').forEach(sel => {
+    rows.push({ employee_id:sel.dataset.emp, date:sel.dataset.date, station:sel.value })
+  })
+
+  try {
+    // Upsert all assignments
+    const {error} = await sb.from('assignments').upsert(rows, {onConflict:'employee_id,date'})
+    if(error) throw error
+    showToast(`${rows.length} assignments saved ✓`,'success')
+  } catch(e) {
+    showToast('Save failed: '+e.message,'error')
+  } finally {
+    btn.disabled=false; btn.innerHTML='💾 Save Assignments'
+  }
+}
+
+function stationColor(station) {
+  const colors = {
+    'Gel Bead':'#e8f5e9','Chip':'#e3f2fd','Packaging':'#fff8e1',
+    'Injection 1':'#f3e5f5','Injection 2':'#ede7f6','QC':'#e0f7fa','Warehouse':'#fce4ec'
+  }
+  return colors[station]||'#fff'
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════
+function dateStr(d) {
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')
+}
+function addDays(d,n) { const r=new Date(d); r.setDate(r.getDate()+n); return r }
+function getMonday(d) { const r=new Date(d); const day=r.getDay(); r.setDate(r.getDate()-(day===0?6:day-1)); return r }
+function fmt(d) { return d.toLocaleDateString('en-SG',{day:'2-digit',month:'short',year:'numeric'}) }
+function formatDateShort(ds) {
+  if(!ds) return ''
+  const d = new Date(ds+'T00:00:00')
+  return d.toLocaleDateString('en-SG',{day:'2-digit',month:'short',year:'numeric'})
+}
+function getWeekNumber(d) {
+  const date = new Date(d)
+  date.setHours(0,0,0,0)
+  date.setDate(date.getDate()+3-(date.getDay()+6)%7)
+  const week1 = new Date(date.getFullYear(),0,4)
+  return {
+    wk: 1+Math.round(((date-week1)/86400000-3+(week1.getDay()+6)%7)/7),
+    yr: date.getFullYear()
+  }
+}
+function esc(s) { const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML }
+
+let toastTimer
+function showToast(msg,type='info') {
+  const t=document.getElementById('toast')
+  t.textContent=({success:'✅ ',error:'❌ ',info:'ℹ️ '}[type]||'')+msg
+  t.className='toast-'+type
+  clearTimeout(toastTimer)
+  toastTimer=setTimeout(()=>{t.style.display='none'},3500)
+}
+</script>
+</body>
+</html>
